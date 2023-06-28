@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-
-
 function Enviar({ arquivos }) {
   const [empresaSelecionada, setEmpresaSelecionada] = useState("");
   const [modeloSelecionado, setModeloSelecionado] = useState("");
-
 
   const handleEmpresaChange = (event) => {
     setEmpresaSelecionada(event.target.value);
@@ -15,51 +12,44 @@ function Enviar({ arquivos }) {
   const handleModeloChange = (event) => {
     setModeloSelecionado(event.target.value);
   };
+
   const enviarParaArgus = (empresaSelecionada) => {
-    const endpoint = "https://apioci.argus.app.br:23243/apiargus/"+empresaSelecionada+"/uploadmailing";
+    const endpoint = `https://apioci.argus.app.br:23243/apiargus/${empresaSelecionada}/uploadmailing`;
     const token = "oLbJS3hu6s2tquHTFAFMUwwEL9KKTXw28d3QzJ4AX4AYDxUN6uHP30gIEAAsECMM";
-  
-    // Crie um objeto FormData para enviar os dados do formulário
+
     const formData = new FormData();
     formData.append("empresa", empresaSelecionada);
-  
-    // Adicione os arquivos selecionados ao FormData
+
     arquivos.forEach((arquivo) => {
       formData.append("arquivos[]", arquivo.file);
     });
-  
-    // Faça a chamada à API usando o axios
+
     axios
       .post(endpoint, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          "token-signature": token
-        }
+          "token-signature": token,
+        },
       })
       .then((response) => {
-        // Manipule a resposta da API conforme necessário
         console.log(response.data);
-        // Exiba uma mensagem de sucesso ou faça outras ações
-  
-        // Limpe o formulário ou redefina os estados, se necessário
         setEmpresaSelecionada("");
         setModeloSelecionado("");
       })
       .catch((error) => {
-        // Manipule o erro da API conforme necessário
         console.error(error);
-        // Exiba uma mensagem de erro ou faça outras ações
       });
   };
-  
+
   const handleEnviarClick = () => {
-    if (isFormValid) {
-      // Chamar a função externa para enviar para o Argus
+    if (isFormValid()) {
       enviarParaArgus(empresaSelecionada);
     }
   };
 
-  const isFormValid = empresaSelecionada !== "" && modeloSelecionado !== "";
+  const isFormValid = () => {
+    return empresaSelecionada !== "" && modeloSelecionado !== "";
+  };
 
   return (
     <>
@@ -68,7 +58,6 @@ function Enviar({ arquivos }) {
           <div className="row">
             <div className="col-6">
               <h3>Empresa</h3>
-              {/* Lista de nomes de arquivos */}
               <select
                 name="empresa-argus"
                 id="argus-sl"
@@ -87,7 +76,6 @@ function Enviar({ arquivos }) {
             </div>
             <div className="col-6">
               <h3>Modelo Argus</h3>
-              {/* Lista de nomes de arquivos */}
               <select
                 name="modelo-argus"
                 id="argus-sl"
@@ -107,7 +95,6 @@ function Enviar({ arquivos }) {
             <div className="col-15">
               <br />
               <h3>Bases</h3>
-              {/* Checkboxes para selecionar arquivos */}
               {arquivos.map((arquivo, index) => (
                 <div className="input-group mb-3" key={index}>
                   <div
@@ -138,20 +125,13 @@ function Enviar({ arquivos }) {
                 type="button"
                 id="inputGroupFileAddon04"
                 onClick={handleEnviarClick}
-                disabled={!isFormValid}
+                disabled={!isFormValid()}
               >
                 Enviar para o Argus
               </button>
 
               <div>
                 <br />
-                {/* {mostrarPopup && (
-                  <Popup
-                    onClose={handleClosePopup}
-                    onConfirm={handleConfirmarEnviar}
-                    isPasswordCorrect={mostrarPopup}
-                  />
-                )} */}
               </div>
             </div>
           </div>
