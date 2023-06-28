@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Tabela from "../components/tabela";
 import Enviar from "../components/enviar";
-import Popup from "../components/auth";
 
 function Uploader() {
   const [arquivos, setArquivos] = useState([]);
@@ -96,9 +95,7 @@ function Uploader() {
         
       )}
 
-      {mostrarPopup && (
-        <Popup onClose={handleClosePopup} onConfirm={handleConfirmarEnviar} />
-      )}
+      
     </>
   );
 }
