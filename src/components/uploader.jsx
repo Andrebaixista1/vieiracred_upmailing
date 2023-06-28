@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Tabela from "./Tabela";
-import Enviar from "./Enviar";
+import Tabela from "./tabela";
+import Enviar from "./enviar";
 import Popup from "./auth";
 
 function Uploader() {
