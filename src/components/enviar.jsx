@@ -49,7 +49,7 @@ function Enviar({ arquivos }) {
       method: 'POST',
       headers: headers,
       body: formData,
-      timeout: 50000,
+      timeout: 600000,
       agent: { rejectUnauthorized: false }
     };
     
