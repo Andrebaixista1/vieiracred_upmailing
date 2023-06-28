@@ -16,7 +16,7 @@ function Enviar({ arquivos }) {
     setModeloSelecionado(event.target.value);
   };
   const enviarParaArgus = (empresaSelecionada) => {
-    const endpoint = "http://apioci.argus.app.br:23243/apiargus/"+empresaSelecionada+"/uploadmailing";
+    const endpoint = "https://apioci.argus.app.br:23243/apiargus/"+empresaSelecionada+"/uploadmailing";
     const token = "oLbJS3hu6s2tquHTFAFMUwwEL9KKTXw28d3QzJ4AX4AYDxUN6uHP30gIEAAsECMM";
   
     // Crie um objeto FormData para enviar os dados do formulário
