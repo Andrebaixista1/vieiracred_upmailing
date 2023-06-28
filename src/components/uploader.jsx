@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Tabela from "./tabela";
-import Enviar from "./enviar";
-import Popup from "./auth";
+import Tabela from "../components/tabela";
+import Enviar from "../components/enviar";
+import Popup from "../components/auth";
 
 function Uploader() {
   const [arquivos, setArquivos] = useState([]);
