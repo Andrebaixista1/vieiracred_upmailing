@@ -78,7 +78,7 @@ function Enviar({ arquivos }) {
               <h3>Modelo Argus</h3>
               <select
                 name="modelo-argus"
-                id="argus-sl"
+                id="argus-model"
                 className="form-select bg-dark"
                 style={{ color: "white" }}
                 value={modeloSelecionado}
