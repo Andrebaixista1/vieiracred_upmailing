@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState } from 'react';
+import axios from 'axios';
 
 function Enviar({ arquivos }) {
-  const [empresaSelecionada, setEmpresaSelecionada] = useState("");
-  const [modeloSelecionado, setModeloSelecionado] = useState("");
+  const [empresaSelecionada, setEmpresaSelecionada] = useState('');
+  const [modeloSelecionado, setModeloSelecionado] = useState('');
+  const [arquivoSelecionado, setArquivoSelecionado] = useState('');
+  // const [exibirLoading, setExibirLoading] = useState(false); // Nova variável de estado
 
   const handleEmpresaChange = (event) => {
     setEmpresaSelecionada(event.target.value);
@@ -13,48 +15,64 @@ function Enviar({ arquivos }) {
     setModeloSelecionado(event.target.value);
   };
 
-  const enviarParaArgus = (empresaSelecionada) => {
-    const endpoint = `https://apioci.argus.app.br:23243/apiargus/${empresaSelecionada}/uploadmailing`;
-    const token = "oLbJS3hu6s2tquHTFAFMUwwEL9KKTXw28d3QzJ4AX4AYDxUN6uHP30gIEAAsECMM";
+  const handleArquivoChange = (event) => {
+    setArquivoSelecionado(event.target.value);
+  };
 
+  const enviarParaArgus = () => {
+    const apiLink = 'https://apioci.argus.app.br:23243/apiargus/';
+    const tokenSignature = 'oLbJS3hu6s2tquHTFAFMUwwEL9KKTXw28d3QzJ4AX4AYDxUN6uHP30gIEAAsECMM';
+    const usuario = 'planejamento';
+    const senha = 'vieira@10';
+  
+    const empresaSelecionada = 'vieiracred_sl1'; // Substitua pelo valor correto
+  
+    const url = `${apiLink}${empresaSelecionada}/uploadmailing`;
+  
+    const headers = {
+      'Token-Signature': tokenSignature,
+      'Usuario': usuario,
+      'Password': senha,
+    };
+  
+    const arquivo = arquivos.find((arquivo) => arquivo.name === arquivoSelecionado);
+    if (!arquivo) {
+      console.error('Arquivo não encontrado');
+      return;
+    }
+  
     const formData = new FormData();
-    formData.append("empresa", empresaSelecionada);
-
-    arquivos.forEach((arquivo) => {
-      formData.append("arquivos[]", arquivo.file);
-    });
-
-    axios
-      .post(endpoint, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "token-signature": token,
-        },
+    formData.append('file', arquivo);
+  
+    // Configuração da requisição
+    const requestOptions = {
+      method: 'POST',
+      headers: headers,
+      body: formData,
+      timeout: 50000,
+      agent: { rejectUnauthorized: false }
+    };
+    
+  
+    // Envio da requisição usando a API Fetch
+    fetch(url, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        // Trate a resposta da API conforme necessário
+        console.log(data);
       })
-      .then((response) => {
-        console.log(response.data);
-        setEmpresaSelecionada("");
-        setModeloSelecionado("");
-      })
-      .catch((error) => {
+      .catch(error => {
+        // Lide com erros de requisição
         console.error(error);
       });
   };
-
-  const handleEnviarClick = () => {
-    if (isFormValid()) {
-      enviarParaArgus(empresaSelecionada);
-    }
-  };
-
-  const isFormValid = () => {
-    return empresaSelecionada !== "" && modeloSelecionado !== "";
-  };
+  
 
   return (
     <>
-      <div className="container mt-10">
-        <form action="">
+      <h1>Enviar Arquivos</h1>
+      <div className="container">
+        <form>
           <div className="row">
             <div className="col-6">
               <h3>Empresa</h3>
@@ -62,7 +80,7 @@ function Enviar({ arquivos }) {
                 name="empresa-argus"
                 id="argus-sl"
                 className="form-select bg-dark"
-                style={{ color: "white" }}
+                style={{ color: 'white' }}
                 value={empresaSelecionada}
                 onChange={handleEmpresaChange}
                 required
@@ -80,7 +98,7 @@ function Enviar({ arquivos }) {
                 name="modelo-argus"
                 id="argus-model"
                 className="form-select bg-dark"
-                style={{ color: "white" }}
+                style={{ color: 'white' }}
                 value={modeloSelecionado}
                 onChange={handleModeloChange}
                 required
@@ -92,20 +110,21 @@ function Enviar({ arquivos }) {
                 <option value="port_inicial">Portabilidade</option>
               </select>
             </div>
-            <div className="col-15">
+            <div className="col-12">
               <br />
               <h3>Bases</h3>
               {arquivos.map((arquivo, index) => (
                 <div className="input-group mb-3" key={index}>
                   <div
                     className="input-group-text"
-                    style={{ backgroundColor: "#1a1b1c" }}
+                    style={{ backgroundColor: '#1a1b1c' }}
                   >
                     <input
-                      className="form-check-input mt-0 "
+                      className="form-check-input mt-0"
                       type="checkbox"
-                      value=""
+                      value={arquivo.name}
                       aria-label="Checkbox for following text input"
+                      onChange={handleArquivoChange}
                     />
                   </div>
                   <input
@@ -113,7 +132,7 @@ function Enviar({ arquivos }) {
                     className="form-control bg-dark"
                     aria-label="Text input with checkbox"
                     value={arquivo.name}
-                    style={{ color: "white" }}
+                    style={{ color: 'white' }}
                     readOnly
                   />
                 </div>
@@ -124,12 +143,18 @@ function Enviar({ arquivos }) {
                 className="btn btn-outline-success"
                 type="button"
                 id="inputGroupFileAddon04"
-                onClick={handleEnviarClick}
-                disabled={!isFormValid()}
+                onClick={enviarParaArgus}
               >
                 Enviar para o Argus
               </button>
-
+              {/* {exibirLoading && (
+              <iframe
+                src="https://example.com/loading" // URL do iframe de carregamento
+                title="Loading"
+                width="100%"
+                height="200px"
+              />
+            )} */}
               <div>
                 <br />
               </div>
